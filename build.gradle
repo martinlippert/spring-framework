@@ -109,8 +109,8 @@ configure(allprojects) { project ->
 		"-Xlint:-unchecked", "-Xlint:-options"]
 
 	compileJava {
-		sourceCompatibility = 1.6
-		targetCompatibility = 1.6
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
 		options.encoding = 'UTF-8'
 	}
 
@@ -740,6 +740,12 @@ project("spring-web") {
 
 project("spring-orm") {
 	description = "Spring Object/Relational Mapping"
+
+	compileJava {
+		sourceCompatibility = 1.6
+		targetCompatibility = 1.6
+		options.encoding = 'UTF-8'
+	}
 
 	dependencies {
 		compile(project(":spring-beans"))
