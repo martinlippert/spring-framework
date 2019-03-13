@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.springframework.beans.BeanMetadataAttributeAccessor;
 import org.springframework.beans.MutablePropertyValues;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.core.io.DescriptiveResource;
 import org.springframework.core.io.Resource;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -155,6 +157,9 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private final Map<String, AutowireCandidateQualifier> qualifiers =
 			new LinkedHashMap<String, AutowireCandidateQualifier>(0);
+
+	@Nullable
+	private Supplier<?> instanceSupplier;
 
 	private boolean nonPublicAccessAllowed = true;
 
@@ -650,6 +655,29 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public void copyQualifiersFrom(AbstractBeanDefinition source) {
 		Assert.notNull(source, "Source must not be null");
 		this.qualifiers.putAll(source.qualifiers);
+	}
+
+	/**
+	 * Specify a callback for creating an instance of the bean,
+	 * as an alternative to a declaratively specified factory method.
+	 * <p>If such a callback is set, it will override any other constructor
+	 * or factory method metadata. However, bean property population and
+	 * potential annotation-driven injection will still apply as usual.
+	 * @since 5.0
+	 * @see #setConstructorArgumentValues(ConstructorArgumentValues)
+	 * @see #setPropertyValues(MutablePropertyValues)
+	 */
+	public void setInstanceSupplier(@Nullable Supplier<?> instanceSupplier) {
+		this.instanceSupplier = instanceSupplier;
+	}
+
+	/**
+	 * Return a callback for creating an instance of the bean, if any.
+	 * @since 5.0
+	 */
+	@Nullable
+	public Supplier<?> getInstanceSupplier() {
+		return this.instanceSupplier;
 	}
 
 	/**
